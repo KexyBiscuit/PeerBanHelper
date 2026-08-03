@@ -146,32 +146,23 @@ public final class IPAddressUtil {
     }
 
     /**
-     * 判断地址是否为 Teredo 地址 (2001:0000::/32)
-     */
-    public static boolean isTeredo(IPAddress address) {
-        return address.isIPv6() && address.toIPv6().isTeredo();
-    }
-
-    /**
-     * 从 Teredo 地址中提取内嵌的客户端 IPv4 地址（按位取反解码）
-     */
-    public static IPAddress extractTeredoIPv4(IPAddress teredoAddress) {
-        IPv4Address encodedIPv4 = teredoAddress.toIPv6().getEmbeddedIPv4Address();
-        return new IPv4Address(~encodedIPv4.intValue());
-    }
-
-    /**
-     * 根据模式解析 Teredo 地址，调用前应先用 isTeredo() 判断。
-     * 返回 null 表示应跳过（skip 模式）；返回原地址表示 original 模式；返回 IPv4 表示 parse 模式。
+     * 根据模式解析 Teredo 地址。非 Teredo 地址原样返回。
+     * 返回 null 表示应跳过（skip 模式）；返回原地址表示非 Teredo 或 original 模式；返回提取的 IPv4 表示 parse 模式。
      *
-     * @param teredoAddress Teredo 地址
-     * @param mode          处理模式：parse / skip / original
+     * @param address 待检查的地址
+     * @param mode    处理模式：parse / skip / original
      */
-    public static IPAddress resolveTeredo(IPAddress teredoAddress, String mode) {
+    public static IPAddress resolveTeredo(IPAddress address, String mode) {
+        if (!address.isIPv6() || !address.toIPv6().isTeredo()) {
+            return address;
+        }
         return switch (mode) {
             case "skip" -> null;
-            case "parse" -> extractTeredoIPv4(teredoAddress);
-            default -> teredoAddress;
+            case "parse" -> {
+                IPv4Address encodedIPv4 = address.toIPv6().getEmbeddedIPv4Address();
+                yield new IPv4Address(~encodedIPv4.intValue());
+            }
+            default -> address;
         };
     }
 }

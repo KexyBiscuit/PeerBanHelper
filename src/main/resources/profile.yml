@@ -150,7 +150,7 @@ module:
     # parse: Parse embedded IPv4 for prefix grouping (default)
     # skip: Skip Teredo addresses entirely
     # original: Treat as regular IPv6 addresses (original behavior)
-    teredo: parse
+    teredo: original
     ban-duration: 2592000000
     # 启用持久化记录
     # Enable persist recording
@@ -276,7 +276,7 @@ module:
     # parse: Parse embedded IPv4 for range ban (default)
     # skip: Skip Teredo addresses entirely
     # original: Treat as regular IPv6 addresses (original behavior)
-    teredo: parse
+    teredo: original
   # 启用来自 BTN 网络的规则
   # Enable the network rules from BTN server, only works when you configured BTN server in config.yml
   btn:
@@ -330,7 +330,7 @@ module:
     # parse: Parse embedded IPv4 for subnet grouping (default)
     # skip: Skip Teredo addresses entirely
     # original: Treat as regular IPv6 addresses (original behavior)
-    teredo: parse
+    teredo: original
   # 规则引擎，支持 AviatorScript 语言 - User script, support AviatorScript
   # 提供在 PBH 上自行编程编写规则的能力 - Provide programming ability on PBH
   expression-engine:

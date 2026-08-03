@@ -27,9 +27,9 @@ public final class ProfileUpdateScript {
 
     @UpdateScript(version = 41)
     public void addTeredoMode() {
-        conf.set("module.auto-range-ban.teredo", "parse");
-        conf.set("module.progress-cheat-blocker.teredo", "parse");
-        conf.set("module.multi-dialing-blocker.teredo", "parse");
+        conf.set("module.auto-range-ban.teredo", "original");
+        conf.set("module.progress-cheat-blocker.teredo", "original");
+        conf.set("module.multi-dialing-blocker.teredo", "original");
     }
 
     @UpdateScript(version = 40)

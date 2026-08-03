@@ -93,7 +93,7 @@ public final class AutoRangeBan extends AbstractRuleFeatureModule implements Rel
     private void reloadConfig() {
         this.ipv4Prefix = getConfig().getInt("ipv4");
         this.ipv6Prefix = getConfig().getInt("ipv6");
-        this.teredoMode = getConfig().getString("teredo", "parse");
+        this.teredoMode = getConfig().getString("teredo", "original");
         this.banDuration = getConfig().getLong("ban-duration", 0);
         getCache().invalidateAll();
     }
@@ -107,11 +107,9 @@ public final class AutoRangeBan extends AbstractRuleFeatureModule implements Rel
             return pass();
         }
         IPAddress peerAddress = peer.getPeerAddress().getAddress().withoutPrefixLength();
-        if (IPAddressUtil.isTeredo(peerAddress)) {
-            peerAddress = resolveTeredo(peerAddress);
-            if (peerAddress == null) {
-                return pass();
-            }
+        peerAddress = resolveTeredo(peerAddress);
+        if (peerAddress == null) {
+            return pass();
         }
         if (peerAddress.isIPv4Convertible()) {
             peerAddress = peerAddress.toIPv4();
@@ -126,12 +124,9 @@ public final class AutoRangeBan extends AbstractRuleFeatureModule implements Rel
             if (bannedMeta.isBanForDisconnect()) {
                 return;
             }
-            IPAddress resolvedAddr = bannedAddr;
-            if (IPAddressUtil.isTeredo(bannedAddr)) {
-                resolvedAddr = resolveTeredo(bannedAddr);
-                if (resolvedAddr == null) {
-                    return;
-                }
+            IPAddress resolvedAddr = resolveTeredo(bannedAddr);
+            if (resolvedAddr == null) {
+                return;
             }
             if (finalPeerAddress.isIPv4() != resolvedAddr.isIPv4()) {
                 return;
@@ -149,7 +144,7 @@ public final class AutoRangeBan extends AbstractRuleFeatureModule implements Rel
             if (bannedCidr.contains(finalPeerAddress)) {
                 StructuredData structuredData = StructuredData.create()
                         .add("relatedBannedAddress", resolvedAddr.toCompressedString());
-                if (IPAddressUtil.isTeredo(bannedAddr)) {
+                if (bannedAddr.isIPv6() && resolvedAddr.isIPv4()) {
                     structuredData.add("teredoMode", teredoMode)
                             .add("originalBannedAddress", bannedAddr.toCompressedString());
                 }
@@ -163,23 +158,20 @@ public final class AutoRangeBan extends AbstractRuleFeatureModule implements Rel
     }
 
     /**
-     * 根据 teredoMode 配置解析 Teredo 地址，调用前应先用 isTeredo() 判断。
-     * 返回 null 表示应跳过该地址（skip 模式或不可解析的前缀块）；
-     * 返回原地址表示 original 模式；
+     * 根据 teredoMode 配置解析 Teredo 地址，内部完成 Teredo 判断。
+     * 返回 null 表示应跳过（skip 模式或不可解析的前缀块）；
+     * 返回原地址表示非 Teredo 或 original 模式；
      * 返回提取的 IPv4 表示 parse 模式。
      */
-    private IPAddress resolveTeredo(IPAddress teredoAddress) {
-        return switch (teredoMode) {
-            case "skip" -> null;
-            case "parse" -> {
-                Integer prefixLen = teredoAddress.getPrefixLength();
-                if (teredoAddress.isMultiple() || (prefixLen != null && prefixLen < 128)) {
-                    yield null;
-                }
-                yield IPAddressUtil.extractTeredoIPv4(teredoAddress.withoutPrefixLength());
+    private IPAddress resolveTeredo(IPAddress address) {
+        if ("parse".equals(teredoMode) && address.isIPv6() && address.toIPv6().isTeredo()) {
+            Integer prefixLen = address.getPrefixLength();
+            if (address.isMultiple() || (prefixLen != null && prefixLen < 128)) {
+                return null;
             }
-            default -> teredoAddress;
-        };
+            address = address.withoutPrefixLength();
+        }
+        return IPAddressUtil.resolveTeredo(address, teredoMode);
     }
 
 }
