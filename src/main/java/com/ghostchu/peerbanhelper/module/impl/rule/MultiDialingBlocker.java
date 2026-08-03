@@ -52,7 +52,6 @@ public final class MultiDialingBlocker extends AbstractRuleFeatureModule impleme
     private long banDuration;
     private int tolerateNumV4;
     private int tolerateNumV6;
-    private String teredoMode;
 
     @Override
     public void onEnable() {
@@ -93,7 +92,6 @@ public final class MultiDialingBlocker extends AbstractRuleFeatureModule impleme
         config.put("cacheLifespan", cacheLifespan);
         config.put("keepHunting", keepHunting);
         config.put("keepHuntingTime", keepHuntingTime);
-        config.put("teredo", teredoMode);
         ctx.json(new StdResp(true, null, config));
     }
 
@@ -121,7 +119,6 @@ public final class MultiDialingBlocker extends AbstractRuleFeatureModule impleme
         cacheLifespan = getConfig().getInt("cache-lifespan") * 1000L;
         keepHunting = getConfig().getBoolean("keep-hunting");
         keepHuntingTime = getConfig().getInt("keep-hunting-time") * 1000L;
-        teredoMode = getConfig().getString("teredo", "original");
 
         cache = CacheBuilder.newBuilder().
                 expireAfterWrite(Duration.ofMillis(cacheLifespan)).
@@ -151,10 +148,7 @@ public final class MultiDialingBlocker extends AbstractRuleFeatureModule impleme
         }
         String torrentName = torrent.getName();
         String torrentId = torrent.getId();
-        IPAddress peerAddress = IPAddressUtil.resolveTeredo(peer.getPeerAddress().getAddress(), teredoMode);
-        if (peerAddress == null) {
-            return pass();
-        }
+        IPAddress peerAddress = IPAddressUtil.resolveTeredo(peer.getPeerAddress().getAddress());
         String peerIpStr = peerAddress.toString();
         IPAddress peerSubnet = peerAddress.isIPv4() ? peerAddress.toPrefixBlock(subnetMaskLength) : peerAddress.toPrefixBlock(subnetMaskV6Length);
         try {

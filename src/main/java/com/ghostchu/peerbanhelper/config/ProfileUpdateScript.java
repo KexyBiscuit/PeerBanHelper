@@ -25,13 +25,6 @@ public final class ProfileUpdateScript {
         this.conf = conf;
     }
 
-    @UpdateScript(version = 41)
-    public void addTeredoMode() {
-        conf.set("module.auto-range-ban.teredo", "original");
-        conf.set("module.progress-cheat-blocker.teredo", "original");
-        conf.set("module.multi-dialing-blocker.teredo", "original");
-    }
-
     @UpdateScript(version = 40)
     public void addGopeedExpRules() {
         List<String> bannedClientNames = conf.getStringList("module.client-name-blacklist.banned-client-name");

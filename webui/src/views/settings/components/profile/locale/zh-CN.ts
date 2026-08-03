@@ -79,9 +79,6 @@ export default {
     '此选项将允许 PCB 在 Peer 下载指定量的数据后，将其短暂的封禁一段时间以便断开其连接，这有助于快速预热进度重置检查',
   'page.settings.tab.profile.module.progressCheatBlocker.fastPCBTestPercentage':
     '快速 PCB 测试启动阈值',
-  'page.settings.tab.profile.module.progressCheatBlocker.teredo': 'Teredo 地址处理',
-  'page.settings.tab.profile.module.progressCheatBlocker.teredoTips':
-    'parse: 解析内嵌 IPv4 用于前缀分组；skip: 跳过 Teredo 地址；original: 作为普通 IPv6 地址处理',
 
   'page.settings.tab.profile.module.ipAddressBlocker.title': 'IP 地址封禁',
   'page.settings.tab.profile.module.ipAddressBlocker.useGlobalBanTime': '使用全局封禁时间',
@@ -94,12 +91,6 @@ export default {
   'page.settings.tab.profile.module.autoRangeBan.useGlobalBanTime': '使用全局封禁时间',
   'page.settings.tab.profile.module.autoRangeBan.ipv4Prefix': 'IPv4 前缀长度',
   'page.settings.tab.profile.module.autoRangeBan.ipv6Prefix': 'IPv6 前缀长度',
-  'page.settings.tab.profile.module.autoRangeBan.teredo': 'Teredo 地址处理',
-  'page.settings.tab.profile.module.autoRangeBan.teredoTips':
-    'parse: 解析内嵌 IPv4 用于范围封禁；skip: 跳过 Teredo 地址；original: 作为普通 IPv6 地址处理',
-  'page.settings.tab.profile.module.autoRangeBan.teredoParse': '解析内嵌 IPv4',
-  'page.settings.tab.profile.module.autoRangeBan.teredoSkip': '跳过',
-  'page.settings.tab.profile.module.autoRangeBan.teredoOriginal': '原始行为 (IPv6)',
 
   'page.settings.tab.profile.module.btn.enable.tips':
     '启用来自 BTN 网络的规则，仅在 config.yml 中配置了 BTN 服务器时生效',
@@ -117,9 +108,6 @@ export default {
   'page.settings.tab.profile.module.multiDialingBlocker.keep-hunting.tips':
     '如果某IP已判定为多拨，无视缓存时间限制继续搜寻其同伙',
   'page.settings.tab.profile.module.multiDialingBlocker.keep-hunting-time': '追猎时间',
-  'page.settings.tab.profile.module.multiDialingBlocker.teredo': 'Teredo 地址处理',
-  'page.settings.tab.profile.module.multiDialingBlocker.teredoTips':
-    'parse: 解析内嵌 IPv4 用于子网分组；skip: 跳过 Teredo 地址；original: 作为普通 IPv6 地址处理',
 
   'page.settings.tab.profile.module.expressionEngine.title': 'AviatorScript 规则引擎',
   'page.settings.tab.profile.module.expressionEngine.tips':

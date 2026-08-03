@@ -146,23 +146,13 @@ public final class IPAddressUtil {
     }
 
     /**
-     * 根据模式解析 Teredo 地址。非 Teredo 地址原样返回。
-     * 返回 null 表示应跳过（skip 模式）；返回原地址表示非 Teredo 或 original 模式；返回提取的 IPv4 表示 parse 模式。
-     *
-     * @param address 待检查的地址
-     * @param mode    处理模式：parse / skip / original
+     * 解析 Teredo 地址中内嵌的客户端 IPv4 地址。非 Teredo 地址原样返回。
      */
-    public static IPAddress resolveTeredo(IPAddress address, String mode) {
+    public static IPAddress resolveTeredo(IPAddress address) {
         if (!address.isIPv6() || !address.toIPv6().isTeredo()) {
             return address;
         }
-        return switch (mode) {
-            case "skip" -> null;
-            case "parse" -> {
-                IPv4Address encodedIPv4 = address.toIPv6().getEmbeddedIPv4Address();
-                yield new IPv4Address(~encodedIPv4.intValue());
-            }
-            default -> address;
-        };
+        IPv4Address encodedIPv4 = address.toIPv6().getEmbeddedIPv4Address();
+        return new IPv4Address(~encodedIPv4.intValue());
     }
 }

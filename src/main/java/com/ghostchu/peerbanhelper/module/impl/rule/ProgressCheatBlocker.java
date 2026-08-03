@@ -78,7 +78,6 @@ public final class ProgressCheatBlocker extends AbstractRuleFeatureModule implem
     private double rewindMaximumDifference;
     private int ipv4PrefixLength;
     private int ipv6PrefixLength;
-    private String teredoMode;
     @Autowired
     private JavalinWebContainer webContainer;
     private long banDuration;
@@ -156,7 +155,6 @@ public final class ProgressCheatBlocker extends AbstractRuleFeatureModule implem
         config.put("excessiveThreshold", excessiveThreshold);
         config.put("maximumDifference", maximumDifference);
         config.put("rewindMaximumDifference", rewindMaximumDifference);
-        config.put("teredo", teredoMode);
         ctx.json(new StdResp(true, null, config));
     }
 
@@ -202,7 +200,6 @@ public final class ProgressCheatBlocker extends AbstractRuleFeatureModule implem
         this.maxWaitDuration = getConfig().getLong("max-wait-duration");
         this.fastPcbTestPercentage = getConfig().getDouble("fast-pcb-test-percentage");
         this.fastPcbTestBlockingDuration = getConfig().getLong("fast-pcb-test-block-duration");
-        this.teredoMode = getConfig().getString("teredo", "original");
         getCache().invalidateAll();
     }
 
@@ -214,10 +211,7 @@ public final class ProgressCheatBlocker extends AbstractRuleFeatureModule implem
         }
         // 处理 IPV6
         IPAddress peerPrefix;
-        IPAddress peerIp = IPAddressUtil.resolveTeredo(peer.getPeerAddress().getAddress(), teredoMode);
-        if (peerIp == null) {
-            return pass();
-        }
+        IPAddress peerIp = IPAddressUtil.resolveTeredo(peer.getPeerAddress().getAddress());
         if (peerIp.isIPv4()) {
             peerPrefix = peerIp.toPrefixBlock(ipv4PrefixLength);
         } else {
